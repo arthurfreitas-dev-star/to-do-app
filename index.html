@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>To-Do Pro</title>
+
+<style>
+:root {
+  --alta: #ff4d4d;
+  --media: #ffc107;
+  --baixa: #28a745;
+  --bg: #f4f6f8;
+  --card: #ffffff;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  background: var(--bg);
+  display: flex;
+  justify-content: center;
+  margin-top: 50px;
+}
+
+.container {
+  width: 420px;
+  background: var(--card);
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+h1 {
+  text-align: center;
+}
+
+.input-group {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+input, select, button {
+  padding: 10px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+}
+
+input {
+  flex: 1;
+}
+
+button {
+  cursor: pointer;
+  border: none;
+  color: white;
+  background: #007bff;
+}
+
+button:hover {
+  opacity: 0.9;
+}
+
+ul {
+  list-style: none;
+  padding: 0;
+}
+
+li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  margin-bottom: 8px;
+  border-radius: 5px;
+  transition: 0.3s;
+}
+
+.alta { border-left: 5px solid var(--alta); background: #ffe5e5; }
+.media { border-left: 5px solid var(--media); background: #fff8e1; }
+.baixa { border-left: 5px solid var(--baixa); background: #e6f4ea; }
+
+.completed {
+  text-decoration: line-through;
+  opacity: 0.6;
+}
+
+.actions button {
+  margin-left: 5px;
+}
+
+.delete { background: #dc3545; }
+.edit { background: #6c757d; }
+
+.filters {
+  display: flex;
+  justify-content: space-between;
+  margin: 10px 0;
+}
+
+.filters button {
+  background: #eee;
+  color: #333;
+}
+
+.active-filter {
+  background: #007bff !important;
+  color: white !important;
+}
+
+.counter {
+  font-size: 14px;
+  text-align: right;
+  color: #555;
+}
+
+.dark {
+  --bg: #1e1e1e;
+  --card: #2c2c2c;
+  color: white;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+  <h1>To-Do Pro</h1>
+
+  <div class="input-group">
+    <input id="taskInput" placeholder="Digite sua tarefa..." aria-label="Campo de tarefa">
+    <select id="priority">
+      <option value="baixa">Baixa</option>
+      <option value="media">Média</option>
+      <option value="alta">Alta</option>
+    </select>
+    <button onclick="addTask()">+</button>
+  </div>
+
+  <div class="filters">
+    <button onclick="setFilter('all')" id="f-all">Todas</button>
+    <button onclick="setFilter('pending')" id="f-pending">Pendentes</button>
+    <button onclick="setFilter('done')" id="f-done">Concluídas</button>
+  </div>
+
+  <ul id="taskList"></ul>
+
+  <div class="counter" id="counter"></div>
+
+  <button onclick="toggleDarkMode()">🌙 Dark Mode</button>
+</div>
+
+<script>
+let tasks = JSON.parse(localStorage.getItem('tasks')) || [];
+let filter = 'all';
+
+document.getElementById('taskInput')
+  .addEventListener('keypress', e => {
+    if (e.key === 'Enter') addTask();
+  });
+
+function save() {
+  localStorage.setItem('tasks', JSON.stringify(tasks));
+}
+
+function addTask() {
+  const input = document.getElementById('taskInput');
+  const priority = document.getElementById('priority').value;
+
+  if (!input.value.trim()) return;
+
+  tasks.push({
+    id: Date.now(),
+    text: input.value,
+    priority,
+    done: false
+  });
+
+  input.value = '';
+  save();
+  render();
+}
+
+function toggleDone(id) {
+  const task = tasks.find(t => t.id === id);
+  task.done = !task.done;
+  save();
+  render();
+}
+
+function deleteTask(id) {
+  tasks = tasks.filter(t => t.id !== id);
+  save();
+  render();
+}
+
+function editTask(id) {
+  const task = tasks.find(t => t.id === id);
+  const newText = prompt("Editar tarefa:", task.text);
+  if (newText) {
+    task.text = newText;
+    save();
+    render();
+  }
+}
+
+function setFilter(f) {
+  filter = f;
+  render();
+}
+
+function render() {
+  const list = document.getElementById('taskList');
+  list.innerHTML = '';
+
+  let filtered = tasks.filter(t => {
+    if (filter === 'pending') return !t.done;
+    if (filter === 'done') return t.done;
+    return true;
+  });
+
+  // Ordenação por prioridade
+  const order = { alta: 1, media: 2, baixa: 3 };
+  filtered.sort((a, b) => order[a.priority] - order[b.priority]);
+
+  filtered.forEach(task => {
+    const li = document.createElement('li');
+    li.className = `${task.priority} ${task.done ? 'completed' : ''}`;
+
+    li.innerHTML = `
+      <span>${task.text}</span>
+      <div class="actions">
+        <button onclick="toggleDone(${task.id})">✔</button>
+        <button class="edit" onclick="editTask(${task.id})">✎</button>
+        <button class="delete" onclick="deleteTask(${task.id})">✖</button>
+      </div>
+    `;
+
+    list.appendChild(li);
+  });
+
+  document.getElementById('counter').textContent =
+    `${tasks.filter(t => !t.done).length} pendente(s)`;
+
+  updateFilterUI();
+}
+
+function updateFilterUI() {
+  document.querySelectorAll('.filters button').forEach(btn =>
+    btn.classList.remove('active-filter')
+  );
+  document.getElementById(`f-${filter}`).classList.add('active-filter');
+}
+
+function toggleDarkMode() {
+  document.body.classList.toggle('dark');
+}
+
+render();
+</script>
+
+</body>
+</html>
