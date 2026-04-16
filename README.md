@@ -1,178 +1,79 @@
-# 📝 To-Do Pro
+# 📝 To-Do List Profissional
 
-Uma aplicação moderna de lista de tarefas (To-Do List) desenvolvida com **HTML, CSS e JavaScript puro**, focada em boas práticas de desenvolvimento front-end, organização de código e experiência do usuário.
+Uma aplicação simples e funcional de lista de tarefas desenvolvida com **HTML, CSS e JavaScript puro**, ideal para estudos e publicação no GitHub ou Vercel.
 
 ---
 
 ## 🚀 Funcionalidades
 
-### ✅ Gerenciamento de tarefas
+* ✅ Adicionar tarefas
+* 🎯 Definir prioridade:
 
-* Adicionar novas tarefas
-* Editar tarefas existentes
-* Remover tarefas
-* Marcar como concluída
-
-### 🎯 Prioridades
-
-* Definição de prioridade:
-
-  * 🔴 Alta
-  * 🟡 Média
-  * 🟢 Baixa
-* Estilização visual dinâmica baseada na prioridade
-
-### 🔍 Filtros inteligentes
-
-* Visualizar:
-
-  * Todas as tarefas
-  * Apenas pendentes
-  * Apenas concluídas
-
-### 📊 Feedback ao usuário
-
-* Contador de tarefas pendentes em tempo real
-
-### 💾 Persistência de dados
-
-* Armazenamento local com `localStorage`
-* Os dados permanecem mesmo após recarregar a página
-
-### ⚡ Melhor experiência (UX)
-
-* Adicionar tarefas pressionando **Enter**
-* Interface responsiva e intuitiva
-* Atualização dinâmica da interface
-
-### 🌙 Tema Dark Mode
-
-* Alternância entre modo claro e escuro
-
-### ♿ Acessibilidade básica
-
-* Uso de atributos `aria-label`
-* Melhor navegação e usabilidade
+  * Baixa (verde)
+  * Média (laranja)
+  * Alta (vermelho)
+* 📅 Definir data da tarefa
+* ⏰ Definir horário
+* 📆 Exibição automática do dia da semana
+* ✔️ Marcar tarefa como concluída
+* 🗑 Remover tarefas
+* 🌙 Alternar entre tema claro e escuro
+* 💾 Salvamento automático no navegador (LocalStorage)
 
 ---
 
-## 🧱 Estrutura do Projeto
+## 🎨 Estilização
 
-```
-to-do-pro/
-│
-├── index.html   # Estrutura principal + CSS + JS
-└── README.md    # Documentação do projeto
-```
+* Interface responsiva
+* Cores dinâmicas baseadas na prioridade
+* Tema escuro/claro com transição suave
 
 ---
 
-## 🛠️ Tecnologias utilizadas
+## 🛠 Tecnologias utilizadas
 
 * HTML5
-* CSS3 (com variáveis CSS)
-* JavaScript (Vanilla JS)
-* Web Storage API (`localStorage`)
+* CSS3
+* JavaScript (Vanilla)
 
 ---
 
-## 🧠 Arquitetura e Boas Práticas
+## 📦 Como usar
 
-### 📦 Estrutura de dados
+1. Clone o repositório:
 
-Cada tarefa é representada como um objeto:
-
-```
-{
-  id: Number,
-  text: String,
-  priority: "alta" | "media" | "baixa",
-  done: Boolean
-}
-```
-
-### 🔁 Renderização
-
-* A interface é atualizada dinamicamente via função `render()`
-* Separação entre dados (estado) e UI
-
-### 💡 Organização do código
-
-Funções principais:
-
-* `addTask()` → adiciona tarefa
-* `deleteTask()` → remove tarefa
-* `toggleDone()` → marca como concluída
-* `editTask()` → edita tarefa
-* `render()` → atualiza interface
-* `save()` → salva no localStorage
-
----
-
-## 📦 Como executar o projeto
-
-1. Clone ou baixe este repositório:
-
-```
-git clone https://github.com/seu-usuario/to-do-pro.git
+```bash
+git clone https://github.com/seu-usuario/seu-repo.git
 ```
 
 2. Abra o arquivo:
 
-```
+```bash
 index.html
 ```
 
-3. Execute diretamente no navegador
+---
+
+## 🌐 Deploy
+
+Você pode publicar facilmente usando:
+
+* Vercel
+* Netlify
+* GitHub Pages
 
 ---
 
-## 📈 Melhorias implementadas
+## 💡 Melhorias futuras
 
-✔ Persistência com `localStorage`
-✔ Filtros dinâmicos
-✔ Ordenação por prioridade
-✔ Estrutura de dados escalável
-✔ UX aprimorada (Enter, feedback visual)
-✔ Dark Mode com CSS variables
-✔ Código organizado e reutilizável
-
----
-
-## 🔮 Possíveis melhorias futuras
-
-* Drag and Drop para reordenar tarefas
-* Integração com backend (Node.js / Firebase)
-* Autenticação de usuário
-* Datas e prazos (deadline)
+* Filtro por tarefas (pendentes/concluídas)
 * Notificações
-* Transformação em SPA (React ou Vue)
-* Testes automatizados
-
----
-
-## 🎯 Objetivo do projeto
-
-Este projeto foi desenvolvido com o objetivo de:
-
-* Praticar JavaScript puro (sem frameworks)
-* Aplicar conceitos de manipulação de DOM
-* Trabalhar com armazenamento local
-* Simular uma aplicação real de produtividade
-* Criar um projeto de portfólio
+* Drag and drop
+* Integração com backend
 
 ---
 
 ## 📄 Licença
 
 Este projeto está sob a licença MIT.
-Sinta-se livre para usar, modificar e distribuir.
 
----
-
-## 👨‍💻 Autor
-
-Desenvolvido por você 🚀
-(Sugestão: adicione seu nome e GitHub aqui)
-
----
