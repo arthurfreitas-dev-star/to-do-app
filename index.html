@@ -1,10 +1,9 @@
-```html
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>To-Do List Avançada</title>
+<title>To-Do List Completa</title>
 
 <style>
 :root {
@@ -14,9 +13,9 @@
 }
 
 body.dark {
-  --bg: #1e1e1e;
+  --bg: #121212;
   --text: #ffffff;
-  --card: #2c2c2c;
+  --card: #1e1e1e;
 }
 
 body {
@@ -29,7 +28,7 @@ body {
 }
 
 .container {
-  max-width: 700px;
+  max-width: 750px;
   margin: auto;
 }
 
@@ -54,18 +53,14 @@ button {
   color: white;
 }
 
-.toggle-theme {
-  margin-bottom: 15px;
-}
-
 .task {
   background: var(--card);
-  padding: 10px;
   margin-top: 10px;
-  border-left: 6px solid gray;
+  padding: 12px;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  border-left: 6px solid gray;
 }
 
 .task.low { border-color: green; }
@@ -77,7 +72,7 @@ button {
   opacity: 0.6;
 }
 
-.task-info {
+.info {
   display: flex;
   flex-direction: column;
 }
@@ -86,8 +81,10 @@ button {
   margin-left: 5px;
 }
 
-.calendar {
-  margin-top: 20px;
+.top-bar {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
 }
 </style>
 </head>
@@ -95,12 +92,14 @@ button {
 <body>
 
 <div class="container">
-  <h1>To-Do List Avançada</h1>
+  <h1>To-Do List Profissional</h1>
 
-  <button class="toggle-theme" onclick="toggleTheme()">🌙 Alternar Tema</button>
+  <div class="top-bar">
+    <button onclick="toggleTheme()">🌙 Alternar Tema</button>
+  </div>
 
-  <form id="taskForm">
-    <input type="text" id="taskInput" placeholder="Descrição da tarefa" required>
+  <form id="form">
+    <input type="text" id="taskInput" placeholder="Descrição da tarefa..." required>
 
     <select id="priority">
       <option value="low">Baixa</option>
@@ -114,18 +113,12 @@ button {
     <button type="submit">Adicionar</button>
   </form>
 
-  <div id="taskList"></div>
-
-  <div class="calendar">
-    <h3>Calendário</h3>
-    <input type="date" id="calendarFilter" onchange="filterByDate()">
-  </div>
+  <div id="list"></div>
 </div>
 
 <script>
-const form = document.getElementById('taskForm');
-const taskList = document.getElementById('taskList');
-const calendarFilter = document.getElementById('calendarFilter');
+const form = document.getElementById('form');
+const list = document.getElementById('list');
 
 let tasks = JSON.parse(localStorage.getItem('tasks')) || [];
 
@@ -134,17 +127,16 @@ form.addEventListener('submit', e => {
 
   const task = {
     id: Date.now(),
-    text: document.getElementById('taskInput').value,
-    priority: document.getElementById('priority').value,
-    date: document.getElementById('date').value,
-    time: document.getElementById('time').value,
-    completed: false
+    text: taskInput.value,
+    priority: priority.value,
+    date: date.value,
+    time: time.value,
+    done: false
   };
 
   tasks.push(task);
   save();
   render();
-
   form.reset();
 });
 
@@ -152,52 +144,60 @@ function save() {
   localStorage.setItem('tasks', JSON.stringify(tasks));
 }
 
-function render(filteredTasks = null) {
-  taskList.innerHTML = '';
-  const list = filteredTasks || tasks;
+function render() {
+  list.innerHTML = '';
 
-  list.forEach(task => {
-    const div = document.createElement('div');
-    div.className = `task ${task.priority} ${task.completed ? 'completed' : ''}`;
+  tasks.forEach(task => {
+    const el = document.createElement('div');
+    el.className = `task ${task.priority} ${task.done ? 'completed' : ''}`;
 
     const info = document.createElement('div');
-    info.className = 'task-info';
+    info.className = 'info';
 
-    const day = task.date ? new Date(task.date).toLocaleDateString('pt-BR', { weekday: 'long' }) : '';
+    let day = '';
+    if (task.date) {
+      day = new Date(task.date).toLocaleDateString('pt-BR', {
+        weekday: 'long'
+      });
+    }
 
     info.innerHTML = `
       <strong>${task.text}</strong>
-      <small>${task.date || ''} ${task.time || ''} ${day}</small>
+      <small>
+        ${task.date || ''} 
+        ${task.time || ''} 
+        ${day}
+      </small>
     `;
 
     const actions = document.createElement('div');
     actions.className = 'actions';
 
-    const completeBtn = document.createElement('button');
-    completeBtn.innerText = '✔';
-    completeBtn.onclick = () => toggleComplete(task.id);
+    const doneBtn = document.createElement('button');
+    doneBtn.innerText = '✔';
+    doneBtn.onclick = () => toggle(task.id);
 
-    const deleteBtn = document.createElement('button');
-    deleteBtn.innerText = '🗑';
-    deleteBtn.onclick = () => deleteTask(task.id);
+    const delBtn = document.createElement('button');
+    delBtn.innerText = '🗑';
+    delBtn.onclick = () => remove(task.id);
 
-    actions.appendChild(completeBtn);
-    actions.appendChild(deleteBtn);
+    actions.appendChild(doneBtn);
+    actions.appendChild(delBtn);
 
-    div.appendChild(info);
-    div.appendChild(actions);
+    el.appendChild(info);
+    el.appendChild(actions);
 
-    taskList.appendChild(div);
+    list.appendChild(el);
   });
 }
 
-function toggleComplete(id) {
-  tasks = tasks.map(t => t.id === id ? {...t, completed: !t.completed} : t);
+function toggle(id) {
+  tasks = tasks.map(t => t.id === id ? {...t, done: !t.done} : t);
   save();
   render();
 }
 
-function deleteTask(id) {
+function remove(id) {
   tasks = tasks.filter(t => t.id !== id);
   save();
   render();
@@ -207,17 +207,8 @@ function toggleTheme() {
   document.body.classList.toggle('dark');
 }
 
-function filterByDate() {
-  const date = calendarFilter.value;
-  if (!date) return render();
-  const filtered = tasks.filter(t => t.date === date);
-  render(filtered);
-}
-
 render();
 </script>
 
 </body>
 </html>
-```
-
